@@ -1,5 +1,8 @@
 <script setup>
-import {ref, computed} from 'vue'
+import {ref, computed, onMounted} from 'vue'
+import axios from 'axios';
+import VueAxios from 'vue-axios';
+
 
 
 const stageIntro = ref(true)
@@ -44,6 +47,23 @@ const questions = ref([
   },
 
 ])
+
+
+
+onMounted(async () => {
+  await axios
+      .get('http://127.0.0.1:8000/api/quizzes')
+      .then(response => {
+        questions.value = response.data[0]
+      })
+      .catch (error => {
+        console.log (error);
+      })
+})
+
+
+
+
 
 const startQuiz = () => {
   stageIntro.value = false
