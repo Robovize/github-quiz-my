@@ -70,13 +70,21 @@ const startQuiz = () => {
   stageQuestions.value = true
 }
 
-const nextQuestion = () => {
+const nextQuestion = async () => {
   if (questionIndex.value < questions.value.length - 1) {
     questionIndex.value++
     questions.value.selectedAnswer = null
   } else {
     stageQuestions.value = false
     stageResults.value = true
+    await axios
+        .get('http://127.0.0.1:8000/api/quizzes')
+        .then(response => {
+          questions.value = response.data[0]
+        })
+        .catch (error => {
+          console.log (error);
+        })
   }
 }
 
