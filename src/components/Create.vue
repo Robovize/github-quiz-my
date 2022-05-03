@@ -17,12 +17,12 @@ const content = ref([
 
 const save = async () => {
   await axios
-      .put('http://127.0.0.1:8000/api/quiz/store', {
-        newTitle: "hello"
+      .post('http://127.0.0.1:8000/api/quiz/store', {
+        newTitle: title.value
       })
       .then(response => {
-        console.log(response.data)
-        console.log(title.value)
+        console.log(response)
+        //console.log(title.value)
       })
       .catch (error => {
         console.log (error);
