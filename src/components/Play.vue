@@ -162,7 +162,7 @@ const resetQuiz = () => {
 </template>
 
 
-<style>
+<style scoped>
 .quiz-container {
   display: flex;
   flex-direction: column;
