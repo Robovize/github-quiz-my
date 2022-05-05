@@ -22,8 +22,7 @@ const save = async () => {
   await axios
       .post('http://127.0.0.1:8000/api/quiz/store', {
         newTitle: title.value,
-        question1: questions[0].answers.value,
-        question2: questions[1].answers.value
+        newContent: questions.value
       })
       .then(response => {
         console.log(response)
@@ -45,25 +44,33 @@ const addQuestion = () => {
   });
 }
 
-const addAnswer = (index) => {
-  questions.value[index].answers.push({
+const addAnswer = (answerGroupIndex) => {
+  questions.value[answerGroupIndex].answers.push({
     answer: '',
     correct: false
   });
   console.log("--")
-  console.log(questions.value[index].answers)
+  console.log(questions.value[answerGroupIndex].answers)
   console.log("--")
 }
 
-const setCorrectAnswer = (index, index2) => {
-  questions.value[index2].answers.correct = !questions.value[index2].answers.correct;
-  console.log("--")
-  console.log(questions.value[index.value].answers[index2].correct)
-  console.log(questions.value[index].answers.correct)
-  console.log(questions.value[index].answers)
-  console.log(questions.value[index])
-  console.log(questions.value)
-  console.log("--")
+const setCorrectAnswer = (answerGroupIndex, answerInputIndex) => {
+  questions.value[answerGroupIndex].answers[answerInputIndex].correct = !questions.value[answerGroupIndex].answers[answerInputIndex].correct;
+  // console.log("-------------------")
+  // console.log(questions.value[answerGroupIndex])
+  // console.log(questions.value)
+  // console.log(answerGroupIndex)
+  // console.log(answerInputIndex)
+  // console.log("-------------------")
+  // console.log(questions.value[index.value].answers[answerInputIndex].correct)
+  // console.log(questions.value[index].answers.correct)
+  // console.log(questions.value[index].answers)
+}
+
+const removeAnswer = (answerGroupIndex, answerInputIndex) => {
+  questions.value[answerGroupIndex].answers.splice(answerInputIndex, 1);
+  // console.log(answerInputIndex)
+  // console.log(questions.value[answerGroupIndex].answers)
 }
 
 </script>
@@ -73,35 +80,25 @@ const setCorrectAnswer = (index, index2) => {
       <input v-model="title" id="quiz-title" type="text" placeholder="Quiz Title" class="form-input">
     </label>
 
-    <div v-for="(answerGroup, index) in questions" :key="index" class="answerGroup">
-      <label for="quiz-title" class="answerLabel"><span>Question {{ index + 1 }}</span>
-        <input v-model="questions[index].question" :id="`question${(index+1)}`" type="text" :placeholder="`Question ${(index+1)}`" class="form-input">
+    <div v-for="(answerGroup, answerGroupIndex) in questions" :key="answerGroupIndex" class="answerGroup">
+      <label :for="`question${(answerGroupIndex+1)}`" class="answerLabel"><span>Question {{ answerGroupIndex + 1 }}</span>
+        <input v-model="questions[answerGroupIndex].question" :id="`question${(answerGroupIndex+1)}`" type="text" :placeholder="`Question ${(answerGroupIndex+1)}`" class="form-input">
       </label>
 
 
-      <div v-for="(answerInput, index2) in questions[index].answers" :key="index2" class="answer">
-        <label for="quiz-title" class="answerLabel"><span>Answer {{ index2 + 1 }}</span>
-          <input v-model="answerInput.answer" :id="`answer${(index+1)}`" type="text" :placeholder="`Answer ${(index+1)}`" class="form-input">
+      <div v-for="(answerInput, answerInputIndex) in questions[answerGroupIndex].answers" :key="answerInputIndex" class="answer">
+        <label :for="`answer${(answerGroupIndex+1)}`" class="answerLabel"><span>Answer {{ answerInputIndex + 1 }}</span>
+          <input v-model="answerInput.answer" :id="`answer${(answerGroupIndex+1)}`" type="text" :placeholder="`Answer ${(answerInputIndex+1)}`" class="form-input">
         </label>
-        <button @click="removeAnswer(index)" >Delete</button>
-        <button @click="setCorrectAnswer(index, index2)" :class="answerInput.correct ? 'setAnswerTrue' : 'setAnswerFalse'">Correct</button>
-        <button @click="moveAnswer(index)" >Move</button>
-        <br>
-        1: {{ questions[index2].answers }}<br>
-        2: {{ questions[index].answers.correct  }}<br>
-        3: {{ index }}<br>
-        4: {{ index2 }}<br>
-        5: {{ answerInput.correct }}
+        <button @click="removeAnswer(answerGroupIndex, answerInputIndex)" >Remove</button>
+        <button @click="setCorrectAnswer(answerGroupIndex, answerInputIndex)" :class="answerInput.correct ? 'setAnswerTrue' : 'setAnswerFalse'">Correct</button>
+        <button @click="moveAnswer(answerGroupIndex)" >Move</button>
       </div>
 
 
       <div style="display: flex; justify-content: flex-end">
-        <button @click="addAnswer(index)" style="width: 100px">+</button>
+        <button @click="addAnswer(answerGroupIndex)" style="width: 100px">+</button>
       </div>
-
-      <label for="quiz-title" class="answerLabel"><span>Correct Answer {{ index + 1 }}</span>
-        <input v-model="questions[index].correct_answer" :id="`correct_answer${(index+1)}`" type="text" :placeholder="`Correct Answer ${(index+1)}`" class="form-input">
-      </label>
 
 
     </div>
@@ -133,6 +130,10 @@ const setCorrectAnswer = (index, index2) => {
   border: 1px solid silver;
 }
 
+.form-input::placeholder {
+font-size: 10px;
+}
+
 .answerGroup {
   width: 100%;
   background: #fafdfe;
@@ -149,12 +150,10 @@ const setCorrectAnswer = (index, index2) => {
 }
 
 .setAnswerTrue{
-  background: green;
-  color: white;
+  color: green;
 }
 
-.setAnswerFalse{
-  background: red;
-  color: white;
+.setAnswerFalse{;
+  color: red;
 }
 </style>
