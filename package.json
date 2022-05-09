@@ -7,7 +7,10 @@
     "preview": "vite preview --port 5050"
   },
   "dependencies": {
+    "@vueuse/rxjs": "^8.4.2",
+    "dexie": "^3.2.2",
     "jsstore": "^4.3.8",
+    "rxjs": "^7.5.5",
     "vue": "^3.2.31",
     "vue-axios": "^3.4.1",
     "vue-router": "^4.0.13"

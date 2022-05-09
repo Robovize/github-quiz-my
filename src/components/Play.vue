@@ -2,6 +2,9 @@
 import {ref, computed, onMounted} from 'vue'
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import { liveQuery } from "dexie";
+import { useObservable } from "@vueuse/rxjs";
+import { db } from '../db';
 
 
 
@@ -11,8 +14,12 @@ const stageResults = ref(false)
 const correctAnswers = ref(0)
 const wrongAnswers = ref(0)
 const questionIndex = ref(0)
-const questions = ref([])
-const title = ref('')
+const APIquestions = ref([])
+// const questions = ref([])
+const APItitle = ref('')
+// const title = ref('')
+const APIid = ref('')
+const id = ref('')
 const answerHistory = computed(() => {
   return questions.value.map(question => {
     return {
@@ -30,8 +37,9 @@ onMounted(async () => {
   await axios
       .get('http://127.0.0.1:8000/api/quizzes')
       .then(response => {
-        questions.value = response.data[0].content
-        title.value = response.data[0].title
+        APIquestions.value = response.data[0].content
+        APItitle.value = response.data[0].title
+        id.value = response.data[0].id
         console.log("---")
         console.log(questions.value)
         console.log(title.value)
@@ -110,11 +118,25 @@ const resetQuiz = () => {
     console.log("hello")
   })
 }
+
+
+
+
+const updateLocalDB = () => {
+  db.items.add({ id: id.value ,title: 'a', content: 'a' })
+  console.log(id.value)
+}
+
+
+const localDBItems = ref(useObservable(liveQuery(() => db.items.toArray())))
+const questions = ref(useObservable(liveQuery(() => db.items.content)))
+
 </script>
 
 <template>
   <router-view></router-view>
-  <h1>{{ title }}</h1>
+  <h1>{{ localDBItems[0].title }}</h1>
+  <button @click="updateLocalDB">Update Local DB</button>
 
   <div v-if="stageIntro" class="quiz-container">
     <button @click="startQuiz">Start</button>
