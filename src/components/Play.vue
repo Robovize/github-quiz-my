@@ -35,16 +35,13 @@ onMounted(async () => {
         console.log("---")
         console.log(questions.value)
         console.log(title.value)
+        console.log(response.data)
         console.log("---")
       })
       .catch (error => {
         console.log (error);
       })
 })
-
-
-
-
 
 const startQuiz = () => {
   stageIntro.value = false
@@ -126,10 +123,10 @@ const resetQuiz = () => {
         <input
             type="radio"
             :id="index"
-            :value="answer"
+            :value="answer.answer"
             v-model="questions[questionIndex].selectedAnswer"
             @change="setAnswer($event)"
-            :disabled="questions[questionIndex].selectedAnswer"/> {{ answer }}
+            :disabled="questions[questionIndex].selectedAnswer"/> {{ answer.answer }}
       </label>
       <button @click="previousQuestion" :disabled="questionIndex === 0">&lt; Back</button>
       <button @click="nextQuestion" :disabled="!questions[questionIndex].selectedAnswer">
@@ -151,10 +148,10 @@ const resetQuiz = () => {
         <input
             type="radio"
             :id="index"
-            :value="answer"
+            :value="answer.answer"
             v-model="questions[key].selectedAnswer"
             @change="setAnswer($event)"
-            :disabled="questions[key].selectedAnswer"/> {{ answer }}
+            :disabled="questions[key].selectedAnswer"/> {{ answer.answer }}
       </label>
     </div>
   </div>

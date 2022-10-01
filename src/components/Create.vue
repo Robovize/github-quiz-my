@@ -9,12 +9,15 @@ const title = ref('');
 // const category = ref('');
 const questions = ref([
   {
+    questionID: '',
     question: '',
     correct_answer: '',
     answers: [{
       answer: '',
       correct: false
-    }]
+    }],
+    selectedAnswer: null,
+    is_answer_correct: null
   },
 ]);
 
@@ -22,8 +25,7 @@ const save = async () => {
   await axios
       .post('http://127.0.0.1:8000/api/quiz/store', {
         newTitle: title.value,
-        question1: questions[0].answers.value,
-        question2: questions[1].answers.value
+        newContent: questions.value
       })
       .then(response => {
         console.log(response)
@@ -36,12 +38,15 @@ const save = async () => {
 
 const addQuestion = () => {
   questions.value.push({
+    questionID: '',
     question: '',
     correct_answer: '',
     answers: [{
       answer: '',
       correct: false
-    }]
+    }],
+    selectedAnswer: null,
+    is_answer_correct: null
   });
 }
 
@@ -52,6 +57,8 @@ const addAnswer = (index) => {
   });
   console.log("--")
   console.log(questions.value[index].answers)
+  console.log(questions.value[index])
+  console.log(questions.value)
   console.log("--")
 }
 
@@ -66,6 +73,13 @@ const setCorrectAnswer = (index, index2) => {
   console.log("--")
 }
 
+const log = (index, index2) => {
+  console.log("--")
+  console.log(questions.value[index])
+  console.log(questions.value)
+  console.log(questions.value[index2])
+  console.log("--")
+}
 </script>
 <template>
   <div class="form-container">
@@ -87,11 +101,11 @@ const setCorrectAnswer = (index, index2) => {
         <button @click="setCorrectAnswer(index, index2)" :class="answerInput.correct ? 'setAnswerTrue' : 'setAnswerFalse'">Correct</button>
         <button @click="moveAnswer(index)" >Move</button>
         <br>
-        1: {{ questions[index2].answers }}<br>
-        2: {{ questions[index].answers.correct  }}<br>
-        3: {{ index }}<br>
-        4: {{ index2 }}<br>
-        5: {{ answerInput.correct }}
+        <button @click="log(index, index2)">aa</button>
+        1: {{ questions[index].answers }}<br>
+        2: {{ index }}<br>
+        3: {{ index2 }}<br>
+        4: {{ answerInput.correct }}
       </div>
 
 
@@ -107,7 +121,7 @@ const setCorrectAnswer = (index, index2) => {
     </div>
 
 
-    <button @click="addQuestion">Add Question</button>
+    <button @click="addQuestion()">Add Question</button>
     <button @click="save">Save</button>
 
 
