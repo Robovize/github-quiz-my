@@ -1,6 +1,6 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
-import axios from 'axios';
+ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import { liveQuery } from "dexie";
 import { useObservable } from "@vueuse/rxjs";
@@ -14,14 +14,11 @@ const stageResults = ref(false)
 const correctAnswers = ref(0)
 const wrongAnswers = ref(0)
 const questionIndex = ref(0)
-const APIquestions = ref([])
-// const questions = ref([])
-const APItitle = ref('')
-// const title = ref('')
-const APIid = ref('')
+const questions = ref([])
+const title = ref('')
 const id = ref('')
 const answerHistory = computed(() => {
-  return questions.value.map(question => {
+  return questions?.value?.map(question => {
     return {
       quizID: question.quizID,
       questionID: question.questionID,
@@ -37,12 +34,11 @@ onMounted(async () => {
   await axios
       .get('http://127.0.0.1:8000/api/quizzes')
       .then(response => {
-        APIquestions.value = response.data[0].content
-        APItitle.value = response.data[0].title
+        questions.value = response.data[0].content
+        title.value = response.data[0].title
         id.value = response.data[0].id
         console.log("---")
         console.log(questions.value)
-        console.log(title.value)
         console.log(response.data)
         console.log("---")
       })
@@ -119,20 +115,12 @@ const resetQuiz = () => {
 
 
 
-const updateLocalDB = () => {
-  db.items.add({ id: id.value ,title: 'a', content: 'a' })
-  console.log(id.value)
-}
-
-
-const localDBItems = ref(useObservable(liveQuery(() => db.items.toArray())))
-const questions = ref(useObservable(liveQuery(() => db.items.content)))
 
 </script>
 
 <template>
   <router-view></router-view>
-  <h1>{{ localDBItems[0].title }}</h1>
+  <h1>{{ localDBItems?.[25]?.title }}</h1>
   <button @click="updateLocalDB">Update Local DB</button>
 
   <div v-if="stageIntro" class="quiz-container">
@@ -140,8 +128,8 @@ const questions = ref(useObservable(liveQuery(() => db.items.content)))
   </div>
   <div v-if="stageQuestions">
     <div class="quiz-container">
-      <p>{{ questions[questionIndex].question }}</p>
-      <label v-for="(answer, index) in questions[questionIndex]['answers']" :key ="index" :for="index" class="answer">
+      <p>{{ questions?.[questionIndex]?.question }}</p>
+      <label v-for="(answer, index) in questions?.[questionIndex]['answers']" :key ="index" :for="index" class="answer">
         <input
             type="radio"
             :id="index"
